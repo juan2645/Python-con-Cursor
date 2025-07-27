@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Gestor de Tareas{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-tasks me-2"></i>Mi Lista de Tareas
+        </h1>
+
+        <!-- Formulario para agregar nueva tarea -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>Agregar Nueva Tarea
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('agregar_tarea') }}">
+                    <div class="input-group">
+                        <input type="text" 
+                               class="form-control" 
+                               name="texto" 
+                               placeholder="Escribe tu nueva tarea aquí..." 
+                               required>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Agregar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de tareas -->
+        {% if tareas %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Tareas ({{ tareas|length }})
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for tarea in tareas %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <a href="{{ url_for('completar_tarea', id=tarea.id) }}" 
+                                   class="btn btn-sm btn-outline-{{ 'success' if not tarea.hecho else 'warning' }} me-3"
+                                   title="{{ 'Marcar como completada' if not tarea.hecho else 'Marcar como pendiente' }}">
+                                    <i class="fas fa-{{ 'check' if not tarea.hecho else 'undo' }}"></i>
+                                </a>
+                                <span class="{% if tarea.hecho %}text-decoration-line-through text-muted{% endif %}">
+                                    {{ tarea.texto }}
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <small class="text-muted me-3">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    {{ tarea.fecha_creacion.strftime('%d/%m %H:%M') }}
+                                </small>
+                                <a href="{{ url_for('eliminar_tarea', id=tarea.id) }}" 
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('¿Estás seguro de que quieres eliminar esta tarea?')"
+                                   title="Eliminar tarea">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                <h3 class="text-muted">No hay tareas</h3>
+                <p class="text-muted">Comienza agregando tu primera tarea usando el formulario de arriba.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
