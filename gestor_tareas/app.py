@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, request, redirect, render_template, flash
 from datetime import datetime
-import uuid
 
 # Configuración de la aplicación
 app = Flask(__name__)
@@ -10,61 +9,81 @@ app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'
 tareas = []
 contador_id = 1
 
-# Modelo simple de tarea
-class Tarea:
-    def __init__(self, texto, hecho=False):
-        global contador_id
-        self.id = contador_id
-        contador_id += 1
-        self.texto = texto
-        self.hecho = hecho
-        self.fecha_creacion = datetime.now()
+# Funciones auxiliares
+def agregar_tarea(texto):
+    """Agregar una nueva tarea a la lista"""
+    global contador_id
+    nueva_tarea = {
+        'id': contador_id,
+        'texto': texto,
+        'hecho': False,
+        'fecha_creacion': datetime.now()
+    }
+    tareas.append(nueva_tarea)
+    contador_id += 1
+    # Solo mostrar flash si estamos en contexto de petición
+    try:
+        flash('Tarea agregada exitosamente', 'success')
+    except RuntimeError:
+        pass  # Ignorar error fuera de contexto
 
-# Agregar algunas tareas de ejemplo
-tareas.append(Tarea("Comprar víveres"))
-tareas.append(Tarea("Hacer ejercicio"))
-tareas.append(Tarea("Estudiar Python"))
+def completar_tarea(id):
+    """Marcar una tarea como completada/pendiente"""
+    for tarea in tareas:
+        if tarea['id'] == id:
+            tarea['hecho'] = not tarea['hecho']
+            estado = "completada" if tarea['hecho'] else "pendiente"
+            try:
+                flash(f'Tarea marcada como {estado}', 'success')
+            except RuntimeError:
+                pass
+            break
+    else:
+        try:
+            flash('Tarea no encontrada', 'error')
+        except RuntimeError:
+            pass
+
+def inicializar_tareas():
+    """Inicializar tareas de ejemplo"""
+    global contador_id
+    tareas_ejemplo = ["Comprar víveres", "Hacer ejercicio", "Estudiar Python"]
+    for texto in tareas_ejemplo:
+        nueva_tarea = {
+            'id': contador_id,
+            'texto': texto,
+            'hecho': False,
+            'fecha_creacion': datetime.now()
+        }
+        tareas.append(nueva_tarea)
+        contador_id += 1
 
 @app.route('/')
 def index():
-    """Página principal: mostrar lista de tareas y formulario para añadir nueva"""
-    return render_template('index.html', tareas=tareas)
+    # Ordenar tareas: incompletas primero, luego completadas
+    tareas_ordenadas = sorted(tareas, key=lambda t: t['hecho'])
+    return render_template('index.html', tareas=tareas_ordenadas)
 
 @app.route('/agregar', methods=['POST'])
-def agregar_tarea():
-    """Procesar formulario de nueva tarea y redirigir a /"""
-    texto = request.form.get('texto', '').strip()
-    
-    if not texto:
-        flash('El texto de la tarea no puede estar vacío', 'error')
-    else:
-        nueva_tarea = Tarea(texto)
-        tareas.append(nueva_tarea)
-        flash('Tarea agregada exitosamente', 'success')
-    
-    return redirect(url_for('index'))
+def agregar():
+    texto_tarea = request.form.get('texto_tarea')
+    if texto_tarea:
+        agregar_tarea(texto_tarea)
+    return redirect('/')
 
 @app.route('/completar/<int:id>')
-def completar_tarea(id):
-    """Marcar una tarea como completada"""
-    for tarea in tareas:
-        if tarea.id == id:
-            tarea.hecho = not tarea.hecho
-            estado = "completada" if tarea.hecho else "pendiente"
-            flash(f'Tarea marcada como {estado}', 'success')
-            break
-    else:
-        flash('Tarea no encontrada', 'error')
-    
-    return redirect(url_for('index'))
+def completar(id):
+    completar_tarea(id)
+    return redirect('/')
 
 @app.route('/eliminar/<int:id>')
-def eliminar_tarea(id):
+def eliminar(id):
     """Eliminar una tarea"""
     global tareas
-    tareas = [t for t in tareas if t.id != id]
+    tareas = [t for t in tareas if t['id'] != id]
     flash('Tarea eliminada exitosamente', 'success')
-    return redirect(url_for('index'))
+    return redirect('/')
 
 if __name__ == '__main__':
+    inicializar_tareas()
     app.run(debug=True, host='0.0.0.0', port=5000)
