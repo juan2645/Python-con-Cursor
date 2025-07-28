@@ -1,0 +1,48 @@
+2025-07-28 20:39:27,196 - INFO - Creado directorio: C:\Users\juan2\Downloads\Imagenes
+2025-07-28 20:39:27,197 - INFO - Creado directorio: C:\Users\juan2\Downloads\Documentos
+2025-07-28 20:39:27,198 - INFO - Creado directorio: C:\Users\juan2\Downloads\Videos
+2025-07-28 20:39:27,199 - INFO - Creado directorio: C:\Users\juan2\Downloads\Audio
+2025-07-28 20:39:27,199 - INFO - Creado directorio: C:\Users\juan2\Downloads\Comprimidos
+2025-07-28 20:39:27,200 - INFO - Creado directorio: C:\Users\juan2\Downloads\Programas
+2025-07-28 20:39:27,200 - INFO - Creado directorio: C:\Users\juan2\Downloads\Otros
+2025-07-28 20:39:27,204 - INFO - Iniciando organización de 15 archivos...
+2025-07-28 20:39:27,241 - INFO - Movido: 2- 3- a.pdf -> C:\Users\juan2\Downloads\Documentos\2- 3- a.pdf
+2025-07-28 20:39:27,244 - INFO - Movido: 20250512_130100.jpg -> C:\Users\juan2\Downloads\Imagenes\20250512_130100.jpg
+2025-07-28 20:39:27,249 - INFO - Movido: ChatGPT Image 25 may 2025, 08_21_26 p.m..png -> C:\Users\juan2\Downloads\Imagenes\ChatGPT Image 25 may 2025, 08_21_26 p.m..png
+2025-07-28 20:39:27,252 - INFO - Movido: ChatGPT Image 25 may 2025, 08_22_40 p.m..png -> C:\Users\juan2\Downloads\Imagenes\ChatGPT Image 25 may 2025, 08_22_40 p.m..png
+2025-07-28 20:39:27,253 - INFO - Movido: constancia.pdf -> C:\Users\juan2\Downloads\Documentos\constancia.pdf
+2025-07-28 20:39:27,255 - INFO - Movido: CursorUserSetup-x64-1.2.4.exe -> C:\Users\juan2\Downloads\Programas\CursorUserSetup-x64-1.2.4.exe
+2025-07-28 20:39:27,257 - INFO - Movido: desktop.ini -> C:\Users\juan2\Downloads\Otros\desktop.ini
+2025-07-28 20:39:27,259 - INFO - Movido: diseno-ilustrativo-de-la-camiseta-de-river-para-el-mundial-de-clubes-2025-imagen-skulldesigns-6S4ULNAXIVGTHJJI5P3CCOA52I.avif -> C:\Users\juan2\Downloads\Otros\diseno-ilustrativo-de-la-camiseta-de-river-para-el-mundial-de-clubes-2025-imagen-skulldesigns-6S4ULNAXIVGTHJJI5P3CCOA52I.avif
+2025-07-28 20:39:27,263 - INFO - Movido: Evaluacion_Ingles_2do_Anio.pdf -> C:\Users\juan2\Downloads\Documentos\Evaluacion_Ingles_2do_Anio.pdf
+2025-07-28 20:39:27,266 - INFO - Movido: Roma resumen (1).docx -> C:\Users\juan2\Downloads\Documentos\Roma resumen (1).docx
+2025-07-28 20:39:27,268 - INFO - Movido: Roma resumen.docx -> C:\Users\juan2\Downloads\Documentos\Roma resumen.docx
+2025-07-28 20:39:27,270 - INFO - Movido: Roma resumen.pdf -> C:\Users\juan2\Downloads\Documentos\Roma resumen.pdf
+2025-07-28 20:39:27,273 - INFO - Movido: WhatsApp Installer.exe -> C:\Users\juan2\Downloads\Programas\WhatsApp Installer.exe
+2025-07-28 20:39:27,277 - INFO - Movido: xampp-windows-x64-8.2.12-0-VS16-installer.exe -> C:\Users\juan2\Downloads\Programas\xampp-windows-x64-8.2.12-0-VS16-installer.exe
+2025-07-28 20:39:27,282 - INFO - Movido: yerba.jpeg -> C:\Users\juan2\Downloads\Imagenes\yerba.jpeg
+2025-07-28 20:39:27,282 - INFO - Organización completada. Archivos procesados: 15, Errores: 0
+2025-07-28 20:51:08,629 - INFO - Iniciando organización de 16 archivos...
+2025-07-28 20:51:08,632 - INFO - Movido 2- 3- a.pdf a Documentos/
+2025-07-28 20:51:08,636 - INFO - Movido 20250512_130100.jpg a Imagenes/
+2025-07-28 20:51:08,639 - INFO - Movido ChatGPT Image 25 may 2025, 08_21_26 p.m..png a Imagenes/
+2025-07-28 20:51:08,642 - INFO - Movido ChatGPT Image 25 may 2025, 08_22_40 p.m..png a Imagenes/
+2025-07-28 20:51:08,645 - INFO - Movido choca.mp3 a Audio/
+2025-07-28 20:51:08,648 - INFO - Movido constancia.pdf a Documentos/
+2025-07-28 20:51:08,653 - INFO - Movido CursorUserSetup-x64-1.2.4.exe a Programas/
+2025-07-28 20:51:08,654 - INFO - Nueva categoría creada: AVIF para archivos .avif
+2025-07-28 20:51:08,658 - INFO - Movido diseno-ilustrativo-de-la-camiseta-de-river-para-el-mundial-de-clubes-2025-imagen-skulldesigns-6S4ULNAXIVGTHJJI5P3CCOA52I.avif a AVIF/
+2025-07-28 20:51:08,664 - INFO - Movido Evaluacion_Ingles_2do_Anio.pdf a Documentos/
+2025-07-28 20:51:08,666 - INFO - Movido Roma resumen (1).docx a Documentos/
+2025-07-28 20:51:08,669 - INFO - Movido Roma resumen.docx a Documentos/
+2025-07-28 20:51:08,672 - INFO - Movido Roma resumen.pdf a Documentos/
+2025-07-28 20:51:08,673 - INFO - Nueva categoría creada: LNK para archivos .lnk
+2025-07-28 20:51:08,677 - INFO - Movido Videos - Acceso directo.lnk a LNK/
+2025-07-28 20:51:08,681 - INFO - Movido WhatsApp Installer.exe a Programas/
+2025-07-28 20:51:08,684 - INFO - Movido xampp-windows-x64-8.2.12-0-VS16-installer.exe a Programas/
+2025-07-28 20:51:08,687 - INFO - Movido yerba.jpeg a Imagenes/
+2025-07-28 20:51:08,688 - INFO - Organización completada. Archivos procesados: 16, Errores: 0
+2025-07-28 20:53:08,993 - INFO - Iniciando organización de 1 archivos...
+2025-07-28 20:53:08,994 - INFO - Nueva categoría creada: DLL para archivos .dll
+2025-07-28 20:53:09,006 - INFO - Movido d3dx10_43.dll a DLL/
+2025-07-28 20:53:09,006 - INFO - Organización completada. Archivos procesados: 1, Errores: 0
