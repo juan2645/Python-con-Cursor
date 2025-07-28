@@ -118,35 +118,38 @@ def graficar_top_productos_por_ingresos(df):
         return
     
     # Calcular ingresos por producto
-    ingresos_por_producto = df.groupby('producto')['total_venta'].sum().sort_values(ascending=False)
+    ventas_prod = df.groupby('producto')['total_venta'].sum().sort_values(ascending=False)
     
-    # Tomar los top 5 (o todos si hay menos de 5)
-    top_productos = ingresos_por_producto.head(5)
+    # Tomar los top 5 usando nlargest
+    top5 = ventas_prod.nlargest(5)
     
-    print(f"\n=== TOP {len(top_productos)} PRODUCTOS POR INGRESOS ===")
-    print(top_productos)
+    print(f"\n=== TOP {len(top5)} PRODUCTOS POR INGRESOS ===")
+    print(top5)
     
     # Configurar el gráfico
     plt.figure(figsize=(10, 6))
     
-    # Crear el gráfico de barras horizontales
-    productos = top_productos.index
-    ingresos = top_productos.values
-    colores = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFE66D']
-    
-    plt.barh(productos, ingresos, color=colores[:len(productos)], alpha=0.8, edgecolor='black')
+    # Crear el gráfico de barras
+    plt.bar(top5.index, top5.values, color=['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFE66D'][:len(top5)], 
+            alpha=0.8, edgecolor='black')
     
     # Personalizar el gráfico
-    plt.title(f'Top {len(top_productos)} Productos por Ingresos', fontsize=16, fontweight='bold')
-    plt.xlabel('Ingresos Totales ($)', fontsize=12)
-    plt.ylabel('Producto', fontsize=12)
-    plt.grid(True, alpha=0.3, axis='x')
+    plt.title("Top 5 Productos por Ingresos", fontsize=16, fontweight='bold')
+    plt.xlabel("Producto", fontsize=12)
+    plt.ylabel("Ingresos ($)", fontsize=12)
+    plt.xticks(rotation=45)  # Rotar etiquetas si son largas
+    plt.grid(True, alpha=0.3, axis='y')
     
     # Agregar valores en las barras
-    for i, v in enumerate(ingresos):
-        plt.text(v + 50, i, f'${v}', ha='left', va='center', fontweight='bold')
+    for i, v in enumerate(top5.values):
+        plt.text(i, v + 50, f'${v}', ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
+    
+    # Guardar el gráfico
+    plt.savefig("top5_productos.png", dpi=300, bbox_inches='tight')
+    print("✅ Gráfico guardado como 'top5_productos.png'")
+    
     plt.show()
 
 def analizar_productos(df):
