@@ -48,20 +48,28 @@ def cargar_datos():
 
 def calcular_ventas_por_mes(df):
     """
-    Calcula las ventas totales por mes
+    Calcula las ventas totales por mes usando método más eficiente
     """
     if df is None:
         print("No hay datos para analizar")
         return
     
-    # Crear columna de mes
+    # Crear columna de mes usando to_period
     df['mes'] = df['fecha'].dt.to_period('M')
     
-    # Agrupar por mes y sumar ventas totales
-    ventas_por_mes = df.groupby('mes')['total_venta'].sum().round(2)
+    # Calcular ventas por mes de forma más directa
+    ventas_por_mes = df.groupby('mes')['total_venta'].sum()
+    
+    # Ordenar por índice (mes)
+    ventas_por_mes = ventas_por_mes.sort_index()
     
     print("\n=== VENTAS TOTALES POR MES ===")
+    print("Ventas por mes:")
     print(ventas_por_mes)
+    
+    # Mostrar también en formato tabla
+    print("\nFormato tabla:")
+    print(ventas_por_mes.to_frame(name='Ventas Totales ($)'))
     
     return ventas_por_mes
 
