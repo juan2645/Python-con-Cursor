@@ -3,21 +3,39 @@ import matplotlib.pyplot as plt
 
 def cargar_datos():
     """
-    Carga los datos del archivo CSV de ventas
+    Carga los datos del archivo CSV de ventas con mejor manejo de tipos
     """
     try:
-        # Cargar el archivo CSV
-        df = pd.read_csv('ventas.csv')
+        # Cargar el archivo CSV con parse_dates para la fecha
+        df = pd.read_csv('ventas.csv', parse_dates=['fecha'])
         
-        # Convertir la columna fecha a datetime
-        df['fecha'] = pd.to_datetime(df['fecha'])
+        # Verificar y convertir tipos de datos
+        print("=== VERIFICACIÓN DE TIPOS DE DATOS ===")
+        print("Tipos antes de la conversión:")
+        print(df.dtypes)
+        
+        # Asegurar que cantidad y precio sean numéricos
+        df['cantidad'] = pd.to_numeric(df['cantidad'], errors='coerce')
+        df['precio'] = pd.to_numeric(df['precio'], errors='coerce')
         
         # Calcular el total de ventas por transacción
         df['total_venta'] = df['cantidad'] * df['precio']
         
-        print("Datos cargados exitosamente!")
+        print("\nTipos después de la conversión:")
+        print(df.dtypes)
+        
+        print("\nDatos cargados exitosamente!")
         print(f"Total de registros: {len(df)}")
         print(f"Columnas: {list(df.columns)}")
+        print(f"Rango de fechas: {df['fecha'].min().strftime('%Y-%m-%d')} a {df['fecha'].max().strftime('%Y-%m-%d')}")
+        
+        # Verificar si hay valores nulos
+        nulos = df.isnull().sum()
+        if nulos.sum() > 0:
+            print(f"\n⚠️ Valores nulos encontrados:")
+            print(nulos[nulos > 0])
+        else:
+            print("\n✅ No hay valores nulos en el dataset")
         
         return df
     
