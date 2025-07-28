@@ -46,6 +46,44 @@ def calcular_ventas_por_mes(df):
     
     return ventas_por_mes
 
+def analizar_productos(df):
+    """
+    Analiza el producto más vendido y el que genera mayores ingresos
+    """
+    if df is None:
+        print("No hay datos para analizar")
+        return
+    
+    # Agrupar por producto y calcular métricas
+    analisis_productos = df.groupby('producto').agg({
+        'cantidad': 'sum',
+        'total_venta': 'sum',
+        'precio': 'mean'
+    }).round(2)
+    
+    analisis_productos.columns = ['Cantidad Total', 'Ingresos Totales ($)', 'Precio Promedio ($)']
+    
+    print("\n=== ANÁLISIS POR PRODUCTO ===")
+    print(analisis_productos)
+    
+    # Encontrar el producto más vendido (por cantidad)
+    producto_mas_vendido = analisis_productos['Cantidad Total'].idxmax()
+    cantidad_maxima = analisis_productos['Cantidad Total'].max()
+    
+    # Encontrar el producto con mayores ingresos
+    producto_mayores_ingresos = analisis_productos['Ingresos Totales ($)'].idxmax()
+    ingresos_maximos = analisis_productos['Ingresos Totales ($)'].max()
+    
+    print(f"\n📊 PRODUCTO MÁS VENDIDO:")
+    print(f"   Producto: {producto_mas_vendido}")
+    print(f"   Cantidad total: {cantidad_maxima} unidades")
+    
+    print(f"\n💰 PRODUCTO CON MAYORES INGRESOS:")
+    print(f"   Producto: {producto_mayores_ingresos}")
+    print(f"   Ingresos totales: ${ingresos_maximos}")
+    
+    return analisis_productos
+
 # Cargar los datos
 datos = cargar_datos()
 
@@ -55,3 +93,6 @@ if datos is not None:
     
     # Calcular ventas por mes
     ventas_mensuales = calcular_ventas_por_mes(datos)
+    
+    # Analizar productos
+    analisis_productos = analizar_productos(datos)
