@@ -75,33 +75,38 @@ def calcular_ventas_por_mes(df):
 
 def graficar_ventas_por_mes(ventas_por_mes):
     """
-    Crea un gráfico de las ventas por mes
+    Crea un gráfico de las ventas por mes usando matplotlib
     """
     if ventas_por_mes is None or ventas_por_mes.empty:
         print("No hay datos para graficar")
         return
     
+    # Convertir el índice Period a string para mejor manejo
+    ventas_por_mes.index = ventas_por_mes.index.astype(str)
+    
     # Configurar el gráfico
     plt.figure(figsize=(10, 6))
     
     # Crear el gráfico de barras
-    meses = [str(mes) for mes in ventas_por_mes.index]
-    ventas = ventas_por_mes.values
-    
-    plt.bar(meses, ventas, color='#4ECDC4', alpha=0.7, edgecolor='black')
+    ventas_por_mes.plot(kind='bar', color='#4ECDC4', alpha=0.7, edgecolor='black')
     
     # Personalizar el gráfico
-    plt.title('Ventas Totales por Mes', fontsize=16, fontweight='bold')
-    plt.xlabel('Mes', fontsize=12)
-    plt.ylabel('Ventas Totales ($)', fontsize=12)
+    plt.title("Ventas por Mes", fontsize=16, fontweight='bold')
+    plt.xlabel("Mes", fontsize=12)
+    plt.ylabel("Ventas ($)", fontsize=12)
     plt.xticks(rotation=45)
     plt.grid(True, alpha=0.3)
     
     # Agregar valores en las barras
-    for i, v in enumerate(ventas):
+    for i, v in enumerate(ventas_por_mes.values):
         plt.text(i, v + 50, f'${v}', ha='center', va='bottom', fontweight='bold')
     
     plt.tight_layout()
+    
+    # Guardar el gráfico
+    plt.savefig("ventas_por_mes.png", dpi=300, bbox_inches='tight')
+    print("✅ Gráfico guardado como 'ventas_por_mes.png'")
+    
     plt.show()
 
 def graficar_top_productos_por_ingresos(df):
