@@ -78,6 +78,46 @@ def graficar_ventas_por_mes(ventas_por_mes):
     plt.tight_layout()
     plt.show()
 
+def graficar_top_productos_por_ingresos(df):
+    """
+    Crea un gráfico del top 5 de productos por ingresos
+    """
+    if df is None:
+        print("No hay datos para graficar")
+        return
+    
+    # Calcular ingresos por producto
+    ingresos_por_producto = df.groupby('producto')['total_venta'].sum().sort_values(ascending=False)
+    
+    # Tomar los top 5 (o todos si hay menos de 5)
+    top_productos = ingresos_por_producto.head(5)
+    
+    print(f"\n=== TOP {len(top_productos)} PRODUCTOS POR INGRESOS ===")
+    print(top_productos)
+    
+    # Configurar el gráfico
+    plt.figure(figsize=(10, 6))
+    
+    # Crear el gráfico de barras horizontales
+    productos = top_productos.index
+    ingresos = top_productos.values
+    colores = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFE66D']
+    
+    plt.barh(productos, ingresos, color=colores[:len(productos)], alpha=0.8, edgecolor='black')
+    
+    # Personalizar el gráfico
+    plt.title(f'Top {len(top_productos)} Productos por Ingresos', fontsize=16, fontweight='bold')
+    plt.xlabel('Ingresos Totales ($)', fontsize=12)
+    plt.ylabel('Producto', fontsize=12)
+    plt.grid(True, alpha=0.3, axis='x')
+    
+    # Agregar valores en las barras
+    for i, v in enumerate(ingresos):
+        plt.text(v + 50, i, f'${v}', ha='left', va='center', fontweight='bold')
+    
+    plt.tight_layout()
+    plt.show()
+
 def analizar_productos(df):
     """
     Analiza el producto más vendido y el que genera mayores ingresos
@@ -129,6 +169,10 @@ if datos is not None:
     # Graficar ventas por mes
     print("\nGenerando gráfico de ventas por mes...")
     graficar_ventas_por_mes(ventas_mensuales)
+    
+    # Graficar top productos por ingresos
+    print("\nGenerando gráfico de top productos por ingresos...")
+    graficar_top_productos_por_ingresos(datos)
     
     # Analizar productos
     analisis_productos = analizar_productos(datos)
