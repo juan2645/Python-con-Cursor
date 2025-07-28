@@ -152,35 +152,54 @@ def analizar_productos(df):
         print("No hay datos para analizar")
         return
     
+    # Calcular ingresos por transacción (ya lo tenemos como total_venta)
+    # df['ingreso'] = df['cantidad'] * df['precio']  # Ya calculado como total_venta
+    
     # Agrupar por producto y calcular métricas
-    analisis_productos = df.groupby('producto').agg({
+    ventas_prod = df.groupby('producto').agg({
         'cantidad': 'sum',
-        'total_venta': 'sum',
-        'precio': 'mean'
+        'total_venta': 'sum',  # Usamos total_venta que ya es cantidad * precio
+        'precio': 'mean'  # Precio promedio por producto
     }).round(2)
     
-    analisis_productos.columns = ['Cantidad Total', 'Ingresos Totales ($)', 'Precio Promedio ($)']
+    ventas_prod.columns = ['Cantidad Total', 'Ingresos Totales ($)', 'Precio Promedio ($)']
     
     print("\n=== ANÁLISIS POR PRODUCTO ===")
-    print(analisis_productos)
+    print(ventas_prod)
     
     # Encontrar el producto más vendido (por cantidad)
-    producto_mas_vendido = analisis_productos['Cantidad Total'].idxmax()
-    cantidad_maxima = analisis_productos['Cantidad Total'].max()
+    mas_vendido = ventas_prod['Cantidad Total'].idxmax()
+    cantidad_maxima = ventas_prod.loc[mas_vendido, 'Cantidad Total']
     
     # Encontrar el producto con mayores ingresos
-    producto_mayores_ingresos = analisis_productos['Ingresos Totales ($)'].idxmax()
-    ingresos_maximos = analisis_productos['Ingresos Totales ($)'].max()
+    mayor_ingreso = ventas_prod['Ingresos Totales ($)'].idxmax()
+    ingresos_maximos = ventas_prod.loc[mayor_ingreso, 'Ingresos Totales ($)']
     
-    print(f"\n📊 PRODUCTO MÁS VENDIDO:")
-    print(f"   Producto: {producto_mas_vendido}")
+    print(f"\n📊 PRODUCTO MÁS VENDIDO (por cantidad):")
+    print(f"   Producto: {mas_vendido}")
     print(f"   Cantidad total: {cantidad_maxima} unidades")
+    print(f"   Ingresos generados: ${ventas_prod.loc[mas_vendido, 'Ingresos Totales ($)']:.2f}")
     
     print(f"\n💰 PRODUCTO CON MAYORES INGRESOS:")
-    print(f"   Producto: {producto_mayores_ingresos}")
-    print(f"   Ingresos totales: ${ingresos_maximos}")
+    print(f"   Producto: {mayor_ingreso}")
+    print(f"   Ingresos totales: ${ingresos_maximos:.2f}")
+    print(f"   Cantidad vendida: {ventas_prod.loc[mayor_ingreso, 'Cantidad Total']} unidades")
     
-    return analisis_productos
+    # Comparación y análisis
+    print(f"\n🔍 ANÁLISIS COMPARATIVO:")
+    if mas_vendido == mayor_ingreso:
+        print(f"   ✅ El producto más vendido también genera mayores ingresos")
+    else:
+        print(f"   ⚠️ Diferencia entre más vendido y mayor ingreso:")
+        print(f"      - Más vendido: {mas_vendido} ({cantidad_maxima} unidades)")
+        print(f"      - Mayor ingreso: {mayor_ingreso} (${ingresos_maximos:.2f})")
+        
+        # Calcular diferencia en ingresos
+        ingresos_mas_vendido = ventas_prod.loc[mas_vendido, 'Ingresos Totales ($)']
+        diferencia = ingresos_maximos - ingresos_mas_vendido
+        print(f"      - Diferencia en ingresos: ${diferencia:.2f}")
+    
+    return ventas_prod
 
 # Cargar los datos
 datos = cargar_datos()
