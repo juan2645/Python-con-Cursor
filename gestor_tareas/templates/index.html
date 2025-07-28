@@ -75,7 +75,7 @@
                         <div class="d-flex align-items-center">
                             <!-- Fecha de creación -->
                             <small class="text-muted me-3">
-                                📅 {{ tarea.fecha_creacion.strftime('%d/%m %H:%M') }}
+                                📅 {{ tarea.fecha_creacion[:10] if tarea.fecha_creacion else 'Sin fecha' }}
                             </small>
                             
                             <!-- Botón para eliminar -->

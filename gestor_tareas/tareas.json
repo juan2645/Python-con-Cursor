@@ -1,0 +1,23 @@
+{
+  "tareas": [
+    {
+      "id": 4,
+      "texto": "Ir al Gym",
+      "hecho": false,
+      "fecha_creacion": "2025-07-27T21:05:18.289278"
+    },
+    {
+      "id": 5,
+      "texto": "Llevar a Milton a futbol",
+      "hecho": false,
+      "fecha_creacion": "2025-07-27T21:05:47.308862"
+    },
+    {
+      "id": 6,
+      "texto": "Buscar telefonos",
+      "hecho": true,
+      "fecha_creacion": "2025-07-27T21:05:54.822516"
+    }
+  ],
+  "contador_id": 7
+}
