@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def cargar_datos():
     """
@@ -45,6 +46,37 @@ def calcular_ventas_por_mes(df):
     print(ventas_por_mes)
     
     return ventas_por_mes
+
+def graficar_ventas_por_mes(ventas_por_mes):
+    """
+    Crea un gráfico de las ventas por mes
+    """
+    if ventas_por_mes is None or ventas_por_mes.empty:
+        print("No hay datos para graficar")
+        return
+    
+    # Configurar el gráfico
+    plt.figure(figsize=(10, 6))
+    
+    # Crear el gráfico de barras
+    meses = [str(mes) for mes in ventas_por_mes.index]
+    ventas = ventas_por_mes.values
+    
+    plt.bar(meses, ventas, color='#4ECDC4', alpha=0.7, edgecolor='black')
+    
+    # Personalizar el gráfico
+    plt.title('Ventas Totales por Mes', fontsize=16, fontweight='bold')
+    plt.xlabel('Mes', fontsize=12)
+    plt.ylabel('Ventas Totales ($)', fontsize=12)
+    plt.xticks(rotation=45)
+    plt.grid(True, alpha=0.3)
+    
+    # Agregar valores en las barras
+    for i, v in enumerate(ventas):
+        plt.text(i, v + 50, f'${v}', ha='center', va='bottom', fontweight='bold')
+    
+    plt.tight_layout()
+    plt.show()
 
 def analizar_productos(df):
     """
@@ -93,6 +125,10 @@ if datos is not None:
     
     # Calcular ventas por mes
     ventas_mensuales = calcular_ventas_por_mes(datos)
+    
+    # Graficar ventas por mes
+    print("\nGenerando gráfico de ventas por mes...")
+    graficar_ventas_por_mes(ventas_mensuales)
     
     # Analizar productos
     analisis_productos = analizar_productos(datos)
