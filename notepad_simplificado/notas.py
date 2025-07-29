@@ -1,21 +1,50 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, font
 import os
 
 class EditorNotas(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Editor de Notas")
-        self.geometry("600x400")
+        self.title("Editor de Notas Avanzado")
+        self.geometry("800x600")
         
         # Variable para rastrear el archivo actual
         self.archivo_actual = None
         # Flag para rastrear cambios no guardados
         self.cambios_sin_guardar = False
         
-        # Crear área de texto
-        self.text_area = tk.Text(self)
-        self.text_area.pack(expand=True, fill=tk.BOTH)
+        # Configuración de fuente por defecto
+        self.fuente_actual = "Consolas"
+        self.tamaño_fuente = 10
+        self.zoom_actual = 100
+        
+        # Crear frame principal
+        self.frame_principal = tk.Frame(self)
+        self.frame_principal.pack(expand=True, fill=tk.BOTH)
+        
+        # Crear frame para numeración de líneas
+        self.frame_lineas = tk.Frame(self.frame_principal)
+        self.frame_lineas.pack(side=tk.LEFT, fill=tk.Y)
+        
+        # Crear numeración de líneas
+        self.numeracion_lineas = tk.Text(self.frame_lineas, width=4, padx=3, pady=3,
+                                        takefocus=0, border=0, background='lightgray',
+                                        state='disabled', font=(self.fuente_actual, self.tamaño_fuente))
+        self.numeracion_lineas.pack(side=tk.LEFT, fill=tk.Y)
+        
+        # Crear área de texto principal
+        self.text_area = tk.Text(self.frame_principal, wrap=tk.NONE, undo=True)
+        self.text_area.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        
+        # Configurar scrollbars
+        self.scrollbar_y = tk.Scrollbar(self.frame_principal, orient=tk.VERTICAL, command=self.on_scroll)
+        self.scrollbar_y.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        self.scrollbar_x = tk.Scrollbar(self, orient=tk.HORIZONTAL, command=self.text_area.xview)
+        self.scrollbar_x.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        # Configurar el área de texto
+        self.text_area.config(yscrollcommand=self.scrollbar_y.set, xscrollcommand=self.scrollbar_x.set)
         
         # Configurar el protocolo para manejar el cierre de ventana
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -25,6 +54,14 @@ class EditorNotas(tk.Tk):
         
         # Vincular eventos de cambio de texto
         self.text_area.bind('<Key>', self.on_text_change)
+        self.text_area.bind('<KeyRelease>', self.on_text_change)
+        self.text_area.bind('<Button-1>', self.on_text_change)
+        
+        # Configurar fuente inicial
+        self.aplicar_fuente()
+        
+        # Actualizar numeración inicial
+        self.actualizar_numeracion()
    
     def crear_menu(self):
         menubar = tk.Menu(self)
@@ -49,6 +86,37 @@ class EditorNotas(tk.Tk):
         editmenu.add_command(label="Seleccionar todo", command=self.seleccionar_todo, accelerator="Ctrl+A")
         menubar.add_cascade(label="Editar", menu=editmenu)
         
+        # Menú Formato
+        formatmenu = tk.Menu(menubar, tearoff=0)
+        
+        # Submenú Fuente
+        fontmenu = tk.Menu(formatmenu, tearoff=0)
+        fuentes_comunes = ["Consolas", "Courier New", "Arial", "Times New Roman", "Verdana", "Tahoma"]
+        for fuente in fuentes_comunes:
+            fontmenu.add_command(label=fuente, command=lambda f=fuente: self.cambiar_fuente(f))
+        formatmenu.add_cascade(label="Fuente", menu=fontmenu)
+        
+        # Submenú Tamaño
+        sizemenu = tk.Menu(formatmenu, tearoff=0)
+        tamaños = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24]
+        for tamaño in tamaños:
+            sizemenu.add_command(label=str(tamaño), command=lambda t=tamaño: self.cambiar_tamaño(t))
+        formatmenu.add_cascade(label="Tamaño", menu=sizemenu)
+        
+        formatmenu.add_separator()
+        formatmenu.add_command(label="Zoom +", command=self.zoom_in, accelerator="Ctrl++")
+        formatmenu.add_command(label="Zoom -", command=self.zoom_out, accelerator="Ctrl+-")
+        formatmenu.add_command(label="Zoom Reset", command=self.zoom_reset, accelerator="Ctrl+0")
+        
+        menubar.add_cascade(label="Formato", menu=formatmenu)
+        
+        # Menú Ver
+        viewmenu = tk.Menu(menubar, tearoff=0)
+        viewmenu.add_checkbutton(label="Numeración de líneas", command=self.toggle_numeracion, onvalue=True, offvalue=False)
+        viewmenu.add_separator()
+        viewmenu.add_command(label="Ir a línea...", command=self.ir_a_linea, accelerator="Ctrl+G")
+        menubar.add_cascade(label="Ver", menu=viewmenu)
+        
         self.config(menu=menubar)
         
         # Configurar atajos de teclado
@@ -61,6 +129,84 @@ class EditorNotas(tk.Tk):
         self.bind('<Control-c>', lambda e: self.copiar())
         self.bind('<Control-v>', lambda e: self.pegar())
         self.bind('<Control-a>', lambda e: self.seleccionar_todo())
+        self.bind('<Control-plus>', lambda e: self.zoom_in())
+        self.bind('<Control-minus>', lambda e: self.zoom_out())
+        self.bind('<Control-0>', lambda e: self.zoom_reset())
+        self.bind('<Control-g>', lambda e: self.ir_a_linea())
+    
+    def on_scroll(self, *args):
+        """Sincronizar scroll de numeración con el área de texto"""
+        self.numeracion_lineas.yview(*args)
+        self.text_area.yview(*args)
+    
+    def actualizar_numeracion(self):
+        """Actualizar la numeración de líneas"""
+        contenido = self.text_area.get("1.0", tk.END)
+        lineas = contenido.count('\n')
+        
+        # Generar numeración
+        numeracion = ""
+        for i in range(1, lineas + 1):
+            numeracion += f"{i}\n"
+        
+        # Actualizar widget de numeración
+        self.numeracion_lineas.config(state='normal')
+        self.numeracion_lineas.delete("1.0", tk.END)
+        self.numeracion_lineas.insert("1.0", numeracion)
+        self.numeracion_lineas.config(state='disabled')
+    
+    def toggle_numeracion(self):
+        """Mostrar/ocultar numeración de líneas"""
+        if self.numeracion_lineas.winfo_viewable():
+            self.numeracion_lineas.pack_forget()
+        else:
+            self.numeracion_lineas.pack(side=tk.LEFT, fill=tk.Y)
+    
+    def cambiar_fuente(self, fuente):
+        """Cambiar la fuente del texto"""
+        self.fuente_actual = fuente
+        self.aplicar_fuente()
+    
+    def cambiar_tamaño(self, tamaño):
+        """Cambiar el tamaño de la fuente"""
+        self.tamaño_fuente = tamaño
+        self.aplicar_fuente()
+    
+    def aplicar_fuente(self):
+        """Aplicar la fuente actual al área de texto y numeración"""
+        fuente_config = (self.fuente_actual, int(self.tamaño_fuente * self.zoom_actual / 100))
+        self.text_area.config(font=fuente_config)
+        self.numeracion_lineas.config(font=fuente_config)
+    
+    def zoom_in(self):
+        """Aumentar zoom"""
+        if self.zoom_actual < 200:
+            self.zoom_actual += 10
+            self.aplicar_fuente()
+    
+    def zoom_out(self):
+        """Reducir zoom"""
+        if self.zoom_actual > 50:
+            self.zoom_actual -= 10
+            self.aplicar_fuente()
+    
+    def zoom_reset(self):
+        """Resetear zoom"""
+        self.zoom_actual = 100
+        self.aplicar_fuente()
+    
+    def ir_a_linea(self):
+        """Ir a una línea específica"""
+        from tkinter import simpledialog
+        
+        try:
+            linea = simpledialog.askinteger("Ir a línea", "Número de línea:", 
+                                          minvalue=1, maxvalue=10000)
+            if linea:
+                self.text_area.see(f"{linea}.0")
+                self.text_area.mark_set(tk.INSERT, f"{linea}.0")
+        except:
+            pass
     
     def deshacer(self):
         """Deshacer la última acción"""
@@ -98,12 +244,15 @@ class EditorNotas(tk.Tk):
         return 'break'
     
     def on_text_change(self, event=None):
-        """Marcar que hay cambios sin guardar"""
+        """Marcar que hay cambios sin guardar y actualizar numeración"""
         self.cambios_sin_guardar = True
         # Actualizar el título para mostrar que hay cambios
         titulo_actual = self.title()
         if not titulo_actual.endswith(" *"):
             self.title(titulo_actual + " *")
+        
+        # Actualizar numeración de líneas
+        self.actualizar_numeracion()
     
     def on_closing(self):
         """Manejar el cierre de la ventana"""
@@ -161,6 +310,7 @@ class EditorNotas(tk.Tk):
             self.archivo_actual = filepath
             self.cambios_sin_guardar = False
             self.title(f"Editor de Notas - {filepath}")
+            self.actualizar_numeracion()
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo abrir el archivo:\n{e}")
    
