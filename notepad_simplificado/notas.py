@@ -28,6 +28,8 @@ class EditorNotas(tk.Tk):
    
     def crear_menu(self):
         menubar = tk.Menu(self)
+        
+        # Menú Archivo
         filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Abrir", command=self.abrir_archivo)
         filemenu.add_command(label="Guardar", command=self.guardar_archivo)
@@ -35,7 +37,65 @@ class EditorNotas(tk.Tk):
         filemenu.add_separator()
         filemenu.add_command(label="Salir", command=self.quit)
         menubar.add_cascade(label="Archivo", menu=filemenu)
+        
+        # Menú Editar
+        editmenu = tk.Menu(menubar, tearoff=0)
+        editmenu.add_command(label="Deshacer", command=self.deshacer, accelerator="Ctrl+Z")
+        editmenu.add_separator()
+        editmenu.add_command(label="Cortar", command=self.cortar, accelerator="Ctrl+X")
+        editmenu.add_command(label="Copiar", command=self.copiar, accelerator="Ctrl+C")
+        editmenu.add_command(label="Pegar", command=self.pegar, accelerator="Ctrl+V")
+        editmenu.add_separator()
+        editmenu.add_command(label="Seleccionar todo", command=self.seleccionar_todo, accelerator="Ctrl+A")
+        menubar.add_cascade(label="Editar", menu=editmenu)
+        
         self.config(menu=menubar)
+        
+        # Configurar atajos de teclado
+        self.configurar_atajos()
+    
+    def configurar_atajos(self):
+        """Configurar atajos de teclado adicionales"""
+        self.bind('<Control-z>', lambda e: self.deshacer())
+        self.bind('<Control-x>', lambda e: self.cortar())
+        self.bind('<Control-c>', lambda e: self.copiar())
+        self.bind('<Control-v>', lambda e: self.pegar())
+        self.bind('<Control-a>', lambda e: self.seleccionar_todo())
+    
+    def deshacer(self):
+        """Deshacer la última acción"""
+        try:
+            self.text_area.edit_undo()
+        except tk.TclError:
+            pass  # No hay nada que deshacer
+    
+    def cortar(self):
+        """Cortar texto seleccionado"""
+        try:
+            self.text_area.event_generate("<<Cut>>")
+        except tk.TclError:
+            pass
+    
+    def copiar(self):
+        """Copiar texto seleccionado"""
+        try:
+            self.text_area.event_generate("<<Copy>>")
+        except tk.TclError:
+            pass
+    
+    def pegar(self):
+        """Pegar texto desde el portapapeles"""
+        try:
+            self.text_area.event_generate("<<Paste>>")
+        except tk.TclError:
+            pass
+    
+    def seleccionar_todo(self):
+        """Seleccionar todo el texto"""
+        self.text_area.tag_add(tk.SEL, "1.0", tk.END)
+        self.text_area.mark_set(tk.INSERT, "1.0")
+        self.text_area.see(tk.INSERT)
+        return 'break'
     
     def on_text_change(self, event=None):
         """Marcar que hay cambios sin guardar"""
